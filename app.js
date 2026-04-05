@@ -19,6 +19,10 @@ const PROGRAMS = {
     title: "Lộ trình 1000 từ thành thạo cơ bản",
     description: "Xây vốn từ đủ rộng cho mô tả, nêu quan điểm, so sánh và viết đoạn."
   },
+  1500: {
+    title: "Lộ trình 1500 từ bước đệm B1+/B2",
+    description: "Mở rộng thêm collocations và cụm diễn đạt thực dụng để nói và viết linh hoạt hơn."
+  },
   2000: {
     title: "Lộ trình 2000 từ trung cấp",
     description: "Kế hoạch mở rộng tiếp theo cho giai đoạn B1+/B2."
@@ -82,17 +86,36 @@ const GROUP_TAXONOMY = {
   }
 };
 
+const VSTEP_QUESTION_BANK = [
+  { id: "family_life", title: "Family Life", groupKey: "personal_life", usage: "Speaking", prompt: "Talk about your family and explain why family is important to you.", cue: "Giới thiệu gia đình, vai trò từng người, rồi nói vì sao gia đình quan trọng." },
+  { id: "daily_routine", title: "Daily Routine", groupKey: "personal_life", usage: "Speaking", prompt: "Describe your daily routine on a normal weekday.", cue: "Đi theo trình tự thời gian: sáng, học hoặc làm việc, tối." },
+  { id: "study_habits", title: "Study Habits", groupKey: "education_learning", usage: "Both", prompt: "What study habits help students learn English more effectively?", cue: "Nêu 2-3 thói quen tốt và giải thích vì sao chúng hiệu quả." },
+  { id: "online_learning", title: "Online Learning", groupKey: "education_learning", usage: "Both", prompt: "What are the advantages and disadvantages of online learning?", cue: "Nói mặt tốt, mặt hạn chế, rồi chốt ý kiến của bạn." },
+  { id: "future_job", title: "Future Job", groupKey: "work_career", usage: "Speaking", prompt: "Talk about the job you would like to do in the future.", cue: "Nói nghề bạn muốn làm, lý do chọn và cách chuẩn bị." },
+  { id: "work_skills", title: "Work Skills", groupKey: "work_career", usage: "Writing", prompt: "Which skills are most important for success in the workplace?", cue: "Chọn 2-3 kỹ năng quan trọng rồi giải thích." },
+  { id: "healthy_lifestyle", title: "Healthy Lifestyle", groupKey: "health_lifestyle", usage: "Both", prompt: "How can people maintain a healthy lifestyle?", cue: "Nói về ăn uống, ngủ nghỉ, tập luyện và giảm căng thẳng." },
+  { id: "technology_daily_life", title: "Technology", groupKey: "technology_media", usage: "Both", prompt: "How has technology changed daily life for students and workers?", cue: "Nói về học tập, giao tiếp, công việc và cả mặt tốt lẫn hạn chế." },
+  { id: "travel_experience", title: "Travel", groupKey: "travel_transport", usage: "Speaking", prompt: "Describe a trip you enjoyed and explain why it was memorable.", cue: "Nói nơi đến, người đi cùng, hoạt động chính và điều đáng nhớ." },
+  { id: "transport_choice", title: "Transport", groupKey: "travel_transport", usage: "Writing", prompt: "Why should people use public transport more often?", cue: "Nêu lợi ích về môi trường, chi phí và giao thông." },
+  { id: "community_service", title: "Community", groupKey: "society_community", usage: "Both", prompt: "Why is community service important for young people?", cue: "Nói về trách nhiệm xã hội, kỹ năng mềm và tinh thần cộng đồng." },
+  { id: "city_countryside", title: "City vs Countryside", groupKey: "society_community", usage: "Both", prompt: "Do you prefer living in the city or the countryside? Why?", cue: "So sánh hai nơi rồi chọn nơi bạn thích hơn và giải thích." },
+  { id: "environment_protection", title: "Environment", groupKey: "environment_green", usage: "Both", prompt: "What can students do to protect the environment?", cue: "Nói về thói quen xanh đơn giản ở nhà và ở trường." },
+  { id: "opinion_writing", title: "Opinion Writing", groupKey: "technology_media", usage: "Writing", prompt: "Give your opinion on whether social media is more helpful or harmful.", cue: "Mở ý kiến rõ, nêu 2 lý do, thêm ví dụ ngắn và kết luận." }
+];
+
 const ENRICHED_WORD_BANK = enrichWordBank();
 
 const state = {
   group: "All",
   subtopic: "All",
+  usage: "All",
   mode: "flashcard",
   program: 300,
   currentFlashIndex: 0,
   currentQuiz: null,
   currentTyping: null,
   currentSpeaking: null,
+  currentVstepQuestion: null,
   progress: loadProgress(),
   settings: loadSettings(),
   voices: [],
@@ -110,6 +133,7 @@ const elements = {
   roadmapList: document.querySelector("#roadmapList"),
   groupFilter: document.querySelector("#groupFilter"),
   subtopicFilter: document.querySelector("#subtopicFilter"),
+  usageFilter: document.querySelector("#usageFilter"),
   modeSelect: document.querySelector("#modeSelect"),
   startNowBtn: document.querySelector("#startNowBtn"),
   jumpSpeakingBtn: document.querySelector("#jumpSpeakingBtn"),
@@ -161,11 +185,21 @@ const elements = {
   recordBtn: document.querySelector("#recordBtn"),
   nextSpeakBtn: document.querySelector("#nextSpeakBtn"),
   speechStatus: document.querySelector("#speechStatus"),
+  vstepTopic: document.querySelector("#vstepTopic"),
+  vstepPrompt: document.querySelector("#vstepPrompt"),
+  vstepGuide: document.querySelector("#vstepGuide"),
+  vstepQuestionSets: document.querySelector("#vstepQuestionSets"),
+  vstepKeywords: document.querySelector("#vstepKeywords"),
+  vstepOutline: document.querySelector("#vstepOutline"),
+  vstepAnswer: document.querySelector("#vstepAnswer"),
+  speakVstepBtn: document.querySelector("#speakVstepBtn"),
+  nextVstepBtn: document.querySelector("#nextVstepBtn"),
   panels: {
     flashcard: document.querySelector("#flashcardPanel"),
     quiz: document.querySelector("#quizPanel"),
     typing: document.querySelector("#typingPanel"),
-    speaking: document.querySelector("#speakingPanel")
+    speaking: document.querySelector("#speakingPanel"),
+    vstep: document.querySelector("#vstepPanel")
   }
 };
 
@@ -178,8 +212,10 @@ function init() {
   elements.totalWords.textContent = ENRICHED_WORD_BANK.length;
   renderGroupFilter();
   renderSubtopicFilter();
+  renderUsageFilter();
   elements.groupFilter.value = state.group;
   elements.subtopicFilter.value = state.subtopic;
+  elements.usageFilter.value = state.usage;
   elements.modeSelect.value = state.mode;
   elements.speechRateSelect.value = String(state.settings.rate || DEFAULT_SPEECH_RATE);
   resetRound();
@@ -227,9 +263,89 @@ function enrichWordBank() {
       sourceTopic: item.topic,
       groupKey: meta.groupKey,
       groupLabel: meta.groupLabel,
-      subtopic: meta.subtopics[subtopicIndex]
+      subtopic: meta.subtopics[subtopicIndex],
+      usage: classifyUsage({
+        ...item,
+        sourceTopic: item.topic,
+        groupKey: meta.groupKey,
+        groupLabel: meta.groupLabel,
+        subtopic: meta.subtopics[subtopicIndex]
+      })
     };
   });
+}
+
+function classifyUsage(item) {
+  const text = `${item.word} ${item.meaning} ${item.example} ${item.subtopic}`.toLowerCase();
+  const writingMarkers = [
+    "in my opinion",
+    "for example",
+    "as a result",
+    "on the one hand",
+    "on the other hand",
+    "in conclusion",
+    "paragraph",
+    "writing",
+    "written response",
+    "topic sentence",
+    "opening sentence",
+    "closing sentence",
+    "linking word",
+    "supporting detail",
+    "main point",
+    "main idea sentence",
+    "state a viewpoint",
+    "organize a paragraph",
+    "writing structure",
+    "writing clarity",
+    "writing flow",
+    "writing task",
+    "connect ideas",
+    "compare two options"
+  ];
+  const speakingMarkers = [
+    "speak",
+    "speaking",
+    "conversation",
+    "talk about",
+    "pronunciation",
+    "fluency",
+    "body language",
+    "eye contact",
+    "respond politely",
+    "join a conversation",
+    "ask a question",
+    "answer clearly",
+    "speak naturally",
+    "speak confidently",
+    "practice speaking aloud",
+    "spoken response",
+    "daily communication",
+    "confidence & delivery"
+  ];
+
+  const isWriting = writingMarkers.some((marker) => text.includes(marker));
+  const isSpeaking = speakingMarkers.some((marker) => text.includes(marker));
+
+  if (item.sourceTopic === "Communication") {
+    if (["Writing Skills"].includes(item.subtopic) || isWriting) {
+      return isSpeaking ? "Both" : "Writing";
+    }
+    if (["Daily Communication", "Speaking Skills", "Confidence & Delivery"].includes(item.subtopic) || isSpeaking) {
+      return isWriting ? "Both" : "Speaking";
+    }
+    return "Both";
+  }
+
+  if (isWriting && !isSpeaking) {
+    return "Writing";
+  }
+
+  if (isSpeaking && !isWriting) {
+    return "Speaking";
+  }
+
+  return "Both";
 }
 
 function loadProgress() {
@@ -280,7 +396,8 @@ function getFilteredWords() {
   return getProgramWords().filter((item) => {
     const matchGroup = state.group === "All" || item.groupKey === state.group;
     const matchSubtopic = state.subtopic === "All" || item.subtopic === state.subtopic;
-    return matchGroup && matchSubtopic;
+    const matchUsage = state.usage === "All" || item.usage === state.usage;
+    return matchGroup && matchSubtopic && matchUsage;
   });
 }
 
@@ -313,6 +430,19 @@ function renderSubtopicFilter() {
     .join("");
 }
 
+function renderUsageFilter() {
+  const options = [
+    { value: "All", label: "Tất cả mục tiêu" },
+    { value: "Speaking", label: "Speaking" },
+    { value: "Writing", label: "Writing" },
+    { value: "Both", label: "Both" }
+  ];
+
+  elements.usageFilter.innerHTML = options
+    .map((option) => `<option value="${option.value}">${option.label}</option>`)
+    .join("");
+}
+
 function attachEvents() {
   elements.groupFilter.addEventListener("change", () => {
     state.group = elements.groupFilter.value;
@@ -325,6 +455,12 @@ function attachEvents() {
 
   elements.subtopicFilter.addEventListener("change", () => {
     state.subtopic = elements.subtopicFilter.value;
+    resetRound();
+    refreshAll();
+  });
+
+  elements.usageFilter.addEventListener("change", () => {
+    state.usage = elements.usageFilter.value;
     resetRound();
     refreshAll();
   });
@@ -407,10 +543,15 @@ function attachEvents() {
   elements.speakQuizBtn.addEventListener("click", () => speak(state.currentQuiz?.answer.word));
   elements.speakTypingBtn.addEventListener("click", () => speak(state.currentTyping?.word));
   elements.playSpeakBtn.addEventListener("click", () => speak(state.currentSpeaking?.word));
+  elements.speakVstepBtn?.addEventListener("click", () => speak(state.currentVstepQuestion?.prompt));
 
   elements.nextQuizBtn.addEventListener("click", renderQuiz);
   elements.nextTypingBtn.addEventListener("click", renderTyping);
   elements.nextSpeakBtn.addEventListener("click", renderSpeaking);
+  elements.nextVstepBtn?.addEventListener("click", () => {
+    state.currentVstepQuestion = null;
+    renderVstepPractice();
+  });
 
   elements.showAnswerBtn.addEventListener("click", () => {
     if (!state.currentTyping) {
@@ -454,12 +595,15 @@ function resetRound() {
   state.currentQuiz = null;
   state.currentTyping = null;
   state.currentSpeaking = null;
+  state.currentVstepQuestion = null;
 }
 
 function refreshAll() {
   renderSubtopicFilter();
+  renderUsageFilter();
   elements.groupFilter.value = state.group;
   elements.subtopicFilter.value = state.subtopic;
+  elements.usageFilter.value = state.usage;
   refreshStats();
   switchMode();
   syncModeButtons();
@@ -471,6 +615,7 @@ function refreshAll() {
   renderQuiz();
   renderTyping();
   renderSpeaking();
+  renderVstepPractice();
 }
 
 function refreshStats() {
@@ -516,6 +661,7 @@ function setProgram(program) {
   renderQuiz();
   renderTyping();
   renderSpeaking();
+  renderVstepPractice();
 }
 
 function syncProgramButtons() {
@@ -555,7 +701,7 @@ function renderRoadmap() {
           <div class="roadmap-subtopics">
             ${subtopics.slice(0, 5).map((subtopic) => {
               const active = state.subtopic === subtopic ? "active" : "";
-              return `<span class="subtopic-chip ${active}">${subtopic}</span>`;
+              return `<button type="button" class="subtopic-chip ${active}" data-group="${groupKey}" data-subtopic="${subtopic}">${subtopic}</button>`;
             }).join("")}
           </div>
         </button>
@@ -567,6 +713,19 @@ function renderRoadmap() {
     button.addEventListener("click", () => {
       state.group = button.dataset.group;
       state.subtopic = "All";
+      elements.groupFilter.value = state.group;
+      renderSubtopicFilter();
+      elements.subtopicFilter.value = state.subtopic;
+      resetRound();
+      refreshAll();
+    });
+  });
+
+  [...elements.roadmapList.querySelectorAll("[data-subtopic]")].forEach((chip) => {
+    chip.addEventListener("click", (event) => {
+      event.stopPropagation();
+      state.group = chip.dataset.group;
+      state.subtopic = chip.dataset.subtopic;
       elements.groupFilter.value = state.group;
       renderSubtopicFilter();
       elements.subtopicFilter.value = state.subtopic;
@@ -587,10 +746,10 @@ function renderFlashcard() {
 
   const item = words[state.currentFlashIndex];
   elements.flashcard.classList.remove("flipped");
-  elements.flashTopic.textContent = `${item.groupLabel} • ${item.subtopic}`;
+  elements.flashTopic.textContent = `${item.groupLabel} • ${item.subtopic} • ${item.usage}`;
   elements.flashWord.textContent = item.word;
-  elements.flashIpa.textContent = `${item.ipa} | nhóm gốc: ${item.sourceTopic}`;
-  elements.flashTopicBack.textContent = `${item.groupLabel} • ${item.subtopic}`;
+  elements.flashIpa.textContent = `${item.ipa} | mục tiêu: ${item.usage} | nhóm gốc: ${item.sourceTopic}`;
+  elements.flashTopicBack.textContent = `${item.groupLabel} • ${item.subtopic} • ${item.usage}`;
   elements.flashMeaning.textContent = item.meaning;
   elements.flashPronounce.textContent = `${item.word} ${item.ipa}`;
   elements.flashExample.textContent = `Ví dụ: ${item.example}`;
@@ -608,7 +767,7 @@ function renderQuiz() {
   const choices = shuffle([answer, ...pickMany(words.filter((item) => item.word !== answer.word), 3)]);
   state.currentQuiz = { answer, choices };
 
-  elements.quizTopic.textContent = `${answer.groupLabel} • ${answer.subtopic}`;
+  elements.quizTopic.textContent = `${answer.groupLabel} • ${answer.subtopic} • ${answer.usage}`;
   elements.quizPrompt.textContent = `Nghĩa của "${answer.word}" là gì?`;
   elements.quizMeta.textContent = `${answer.ipa} | ${answer.example}`;
   setFeedback(elements.quizFeedback, "");
@@ -655,7 +814,7 @@ function renderTyping() {
     return;
   }
   state.currentTyping = item;
-  elements.typingTopic.textContent = `${item.groupLabel} • ${item.subtopic}`;
+  elements.typingTopic.textContent = `${item.groupLabel} • ${item.subtopic} • ${item.usage}`;
   elements.typingMeaning.textContent = item.meaning;
   elements.typingExample.textContent = `Gợi ý: ${item.example}`;
   elements.typingInput.value = "";
@@ -668,7 +827,7 @@ function renderSpeaking() {
     return;
   }
   state.currentSpeaking = item;
-  elements.speakTopic.textContent = `${item.groupLabel} • ${item.subtopic}`;
+  elements.speakTopic.textContent = `${item.groupLabel} • ${item.subtopic} • ${item.usage}`;
   elements.speakWord.textContent = item.word;
   elements.speakIpa.textContent = item.ipa;
   elements.speakMeaning.textContent = `Nghĩa: ${item.meaning}. Ví dụ: ${item.example}`;
@@ -679,6 +838,102 @@ function renderSpeaking() {
       ? "Nhấn 'Nói thử' rồi đọc to từ vựng. Hệ thống sẽ so sánh kết quả nhận diện với từ mục tiêu."
       : "Trình duyệt này chưa hỗ trợ nhận diện giọng nói. Bạn vẫn có thể bấm 'Nghe mẫu' và tự luyện nói theo."
   );
+}
+
+function renderVstepPractice() {
+  if (!elements.vstepPrompt) {
+    return;
+  }
+
+  const questions = getAvailableVstepQuestions();
+  if (!questions.length) {
+    elements.vstepTopic.textContent = "VSTEP Practice";
+    elements.vstepPrompt.textContent = "Chưa có câu hỏi phù hợp với bộ lọc hiện tại.";
+    elements.vstepGuide.textContent = "Hãy đổi nhóm lớn hoặc mục tiêu học để xem thêm câu hỏi.";
+    elements.vstepQuestionSets.innerHTML = "";
+    elements.vstepKeywords.innerHTML = "";
+    elements.vstepOutline.innerHTML = "";
+    elements.vstepAnswer.textContent = "";
+    return;
+  }
+
+  const question =
+    state.currentVstepQuestion && questions.some((item) => item.id === state.currentVstepQuestion.id)
+      ? state.currentVstepQuestion
+      : pickRandom(questions);
+
+  state.currentVstepQuestion = question;
+  const keywords = getQuestionKeywords(question);
+
+  elements.vstepTopic.textContent = `${question.title} • ${question.usage}`;
+  elements.vstepPrompt.textContent = question.prompt;
+  elements.vstepGuide.textContent = question.cue;
+  renderVstepQuestionSets(questions, question.id);
+  elements.vstepKeywords.innerHTML = keywords
+    .map((item) => `<span class="keyword-chip">${item.word}</span>`)
+    .join("");
+  elements.vstepOutline.innerHTML = buildVstepOutline(question, keywords)
+    .map((line) => `<li>${line}</li>`)
+    .join("");
+  elements.vstepAnswer.textContent = buildSampleAnswer(question, keywords);
+}
+
+function getAvailableVstepQuestions() {
+  return VSTEP_QUESTION_BANK.filter((question) => {
+    const matchGroup = state.group === "All" || question.groupKey === state.group;
+    const matchUsage = state.usage === "All" || question.usage === state.usage || question.usage === "Both";
+    return matchGroup && matchUsage;
+  });
+}
+
+function renderVstepQuestionSets(questions, activeId) {
+  elements.vstepQuestionSets.innerHTML = questions
+    .map((question) => {
+      const activeClass = question.id === activeId ? "active" : "";
+      return `<button type="button" class="question-chip ${activeClass}" data-question-id="${question.id}">${question.title}</button>`;
+    })
+    .join("");
+
+  [...elements.vstepQuestionSets.querySelectorAll("[data-question-id]")].forEach((button) => {
+    button.addEventListener("click", () => {
+      state.currentVstepQuestion = questions.find((item) => item.id === button.dataset.questionId) || null;
+      renderVstepPractice();
+    });
+  });
+}
+
+function getQuestionKeywords(question) {
+  const pool = getProgramWords().filter((item) => {
+    const matchGroup = item.groupKey === question.groupKey;
+    const matchUsage = question.usage === "Both" || item.usage === question.usage || item.usage === "Both";
+    return matchGroup && matchUsage;
+  });
+
+  return pickMany(pool, Math.min(6, pool.length));
+}
+
+function buildVstepOutline(question, keywords) {
+  const first = keywords[0]?.word || "main idea";
+  const second = keywords[1]?.word || "supporting point";
+  const third = keywords[2]?.word || "example";
+
+  return [
+    `Mở đầu: trả lời trực tiếp câu hỏi và nêu ý chính với "${first}".`,
+    `Phát triển: thêm 1-2 ý phụ bằng "${second}" và "${third}", kèm ví dụ cá nhân hoặc thực tế.`,
+    `Kết thúc: nhắc lại quan điểm chính trong một câu ngắn, rõ và tự nhiên.`
+  ];
+}
+
+function buildSampleAnswer(question, keywords) {
+  const first = keywords[0]?.word || "important";
+  const second = keywords[1]?.word || "helpful";
+  const third = keywords[2]?.word || "daily life";
+
+  if (question.usage === "Writing") {
+    return `In my opinion, ${first} is one of the most important ideas in this topic. First, it can improve ${third} in a practical way. Second, ${second} helps people study, work, and communicate more effectively.`;
+  }
+
+  return `I think ${first} is very important in this topic. In daily life, it can make ${third} easier and more meaningful. For me, ${second} is useful because it helps people feel more confident and better prepared.`;
 }
 
 function speak(text) {

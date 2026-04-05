@@ -51,6 +51,11 @@
               <strong>Thành thạo cơ bản</strong>
               <small>Lộ trình tiếp theo</small>
             </button>
+            <button type="button" class="program-card" data-program="1500">
+              <span class="program-count">1500</span>
+              <strong>Bước đệm B1+/B2</strong>
+              <small>Mở rộng thực dụng</small>
+            </button>
             <button type="button" class="program-card" data-program="2000">
               <span class="program-count">2000</span>
               <strong>Trung cấp</strong>
@@ -114,6 +119,7 @@
               <button type="button" class="mode-chip" data-mode="quiz">Trắc nghiệm</button>
               <button type="button" class="mode-chip" data-mode="typing">Gõ từ</button>
               <button type="button" class="mode-chip" data-mode="speaking">Phát âm</button>
+              <button type="button" class="mode-chip" data-mode="vstep">Ôn VSTEP</button>
             </div>
           </section>
 
@@ -202,45 +208,87 @@
                 </p>
               </div>
             </section>
+
+            <section class="panel" id="vstepPanel">
+              <div class="mode-card vstep-card">
+                <span class="topic-badge" id="vstepTopic"></span>
+                <p class="label">Ôn Theo Câu Hỏi VSTEP</p>
+                <h2 id="vstepPrompt"></h2>
+                <p id="vstepGuide" class="feedback"></p>
+                <div class="question-chip-row" id="vstepQuestionSets"></div>
+                <div class="keyword-section">
+                  <p class="label">Từ khóa nên dùng</p>
+                  <div class="keyword-grid" id="vstepKeywords"></div>
+                </div>
+                <div class="vstep-columns">
+                  <div>
+                    <p class="label">Dàn ý nhanh</p>
+                    <ul class="vstep-outline" id="vstepOutline"></ul>
+                  </div>
+                  <div>
+                    <p class="label">Câu mẫu ngắn</p>
+                    <p class="feedback" id="vstepAnswer"></p>
+                  </div>
+                </div>
+                <div class="actions actions-primary">
+                  <button id="speakVstepBtn">Nghe câu hỏi</button>
+                  <button id="nextVstepBtn" class="secondary">Câu khác</button>
+                </div>
+              </div>
+            </section>
           </main>
         </section>
       </section>
 
       <section class="toolbar compact-toolbar">
-        <label>
-          Nhóm lớn
-          <select id="groupFilter"></select>
-        </label>
-        <label>
-          Topic nhỏ
-          <select id="subtopicFilter"></select>
-        </label>
-        <label>
-          Chế độ
-          <select id="modeSelect">
-            <option value="flashcard">Flashcard</option>
-            <option value="quiz">Trắc nghiệm</option>
-            <option value="typing">Gõ từ</option>
-            <option value="speaking">Phát âm</option>
-          </select>
-        </label>
-        <label>
-          Giọng đọc
-          <select id="voiceSelect">
-            <option value="">Đang tải danh sách giọng...</option>
-          </select>
-        </label>
-        <label>
-          Tốc độ đọc
-          <select id="speechRateSelect">
-            <option value="0.75">Chậm rõ</option>
-            <option value="0.9" selected>Tự nhiên</option>
-            <option value="1">Nhanh hơn</option>
-          </select>
-        </label>
-        <button id="previewVoiceBtn">Nghe thử giọng</button>
-        <button id="shuffleBtn" class="secondary">Đổi bộ câu hỏi</button>
-        <button id="resetProgressBtn" class="secondary">Xóa tiến độ</button>
+        <div class="toolbar-filters">
+          <label>
+            Nhóm lớn
+            <select id="groupFilter"></select>
+          </label>
+          <label class="wide-filter">
+            Topic nhỏ
+            <select id="subtopicFilter"></select>
+          </label>
+          <label>
+            Mục tiêu
+            <select id="usageFilter">
+              <option value="All">Tất cả mục tiêu</option>
+              <option value="Speaking">Speaking</option>
+              <option value="Writing">Writing</option>
+              <option value="Both">Both</option>
+            </select>
+          </label>
+          <label>
+            Chế độ
+            <select id="modeSelect">
+              <option value="flashcard">Flashcard</option>
+              <option value="quiz">Trắc nghiệm</option>
+              <option value="typing">Gõ từ</option>
+              <option value="speaking">Phát âm</option>
+              <option value="vstep">Ôn VSTEP</option>
+            </select>
+          </label>
+          <label>
+            Giọng đọc
+            <select id="voiceSelect">
+              <option value="">Đang tải danh sách giọng...</option>
+            </select>
+          </label>
+          <label>
+            Tốc độ đọc
+            <select id="speechRateSelect">
+              <option value="0.75">Chậm rõ</option>
+              <option value="0.9" selected>Tự nhiên</option>
+              <option value="1">Nhanh hơn</option>
+            </select>
+          </label>
+        </div>
+        <div class="toolbar-actions">
+          <button id="previewVoiceBtn">Nghe thử giọng</button>
+          <button id="shuffleBtn" class="secondary">Đổi bộ câu hỏi</button>
+          <button id="resetProgressBtn" class="secondary">Xóa tiến độ</button>
+        </div>
       </section>
 
       <section class="voice-panel">

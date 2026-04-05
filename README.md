@@ -8,14 +8,15 @@ Day la web app tu hoc tu vung tieng Anh theo 8 nhom lon va topic nho thiet thuc 
 - Nut nghe phat am bang giong may
 - Chon voice tieng Anh tren may de uu tien chat luong doc tot hon
 - Luyen noi thu neu trinh duyet ho tro nhan dien giong noi
-- 4 che do hoc: flashcard, trac nghiem, go tu, phat am
+- 5 che do hoc: flashcard, trac nghiem, go tu, phat am, on theo cau hoi VSTEP
 - Lo trinh hoc theo 8 nhom lon + topic nho
-- Cac goi hoc 300, 500, 700 va 1000 tu dang hoc duoc ngay
+- Bo loc `Speaking / Writing / Both` de hoc dung muc tieu
+- Cac goi hoc 300, 500, 700, 1000, 1500 va 2000 tu dang hoc duoc ngay
 
 ## Cach mo
 
 1. Mo file [index.html](/Users/thamkhang/Downloads/vode/index.html) bang Chrome, Edge hoac Safari.
-2. Chon nhom lon, topic nho va che do hoc.
+2. Chon nhom lon, topic nho, muc tieu hoc va che do hoc.
 3. Chon `Giong doc` va `Toc do doc` o thanh cong cu.
 4. Bam `Nghe thu giong` de test voice.
 5. Bam `Nghe phat am` hoac `Nghe mau` de nghe tu.
