@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VSTEP B1 Vocabulary Game</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">VSTEP B1 VOCAB APP</p>
+          <h1>Học từ vựng theo lộ trình, mở lên là học ngay</h1>
+          <p class="hero-copy">
+            Tập trung vào từ vựng cho nói và viết với nghĩa tiếng Việt, IPA, phát âm
+            và lộ trình theo 8 nhóm lớn cùng các topic nhỏ sát VSTEP hơn.
+          </p>
+        </div>
+        <div class="header-actions">
+          <button id="startNowBtn">Bắt đầu học</button>
+          <button id="jumpSpeakingBtn" class="secondary">Luyện phát âm</button>
+        </div>
+      </header>
+
+      <section class="overview-shell">
+        <article class="overview-main">
+          <p class="eyebrow">Chương Trình</p>
+          <h2 id="programTitle">Lộ trình 300 từ nền tảng</h2>
+          <p id="programDescription" class="feedback">
+            Bắt đầu với 300 từ cốt lõi chia theo 8 nhóm lớn và các topic nhỏ rất hay gặp trong VSTEP B1.
+          </p>
+          <div class="program-grid">
+            <button type="button" class="program-card active" data-program="300">
+              <span class="program-count">300</span>
+              <strong>Nền tảng</strong>
+              <small>Dùng ngay</small>
+            </button>
+            <button type="button" class="program-card" data-program="500">
+              <span class="program-count">500</span>
+              <strong>Mở rộng 1</strong>
+              <small>Lộ trình tiếp theo</small>
+            </button>
+            <button type="button" class="program-card" data-program="700">
+              <span class="program-count">700</span>
+              <strong>Mở rộng 2</strong>
+              <small>Lộ trình tiếp theo</small>
+            </button>
+            <button type="button" class="program-card" data-program="1000">
+              <span class="program-count">1000</span>
+              <strong>Thành thạo cơ bản</strong>
+              <small>Lộ trình tiếp theo</small>
+            </button>
+            <button type="button" class="program-card" data-program="2000">
+              <span class="program-count">2000</span>
+              <strong>Trung cấp</strong>
+              <small>Kế hoạch mở rộng</small>
+            </button>
+            <button type="button" class="program-card" data-program="3000">
+              <span class="program-count">3000</span>
+              <strong>Vốn từ lớn</strong>
+              <small>Kế hoạch dài hạn</small>
+            </button>
+          </div>
+        </article>
+
+        <aside class="overview-stats">
+          <div class="stat-card">
+            <span>Tổng từ khả dụng</span>
+            <strong id="totalWords">300</strong>
+          </div>
+          <div class="stat-card">
+            <span>Đã đánh dấu nhớ</span>
+            <strong id="knownCount">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>Chuỗi đúng</span>
+            <strong id="streakCount">0</strong>
+          </div>
+          <div class="stat-card highlight">
+            <span>Tiến độ chương trình</span>
+            <strong id="programProgressText">300 / 300</strong>
+            <div class="progress-bar">
+              <div class="progress-fill" id="programProgressFill"></div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="learning-shell">
+        <aside class="curriculum-panel">
+          <div class="curriculum-head">
+            <p class="eyebrow">Lộ Trình Học</p>
+            <h2>8 nhóm lớn + topic nhỏ</h2>
+            <p class="feedback">
+              Học theo nhóm lớn để bám đề VSTEP, rồi đi vào topic nhỏ để nói và viết tự nhiên hơn.
+            </p>
+          </div>
+          <div class="roadmap-list" id="roadmapList"></div>
+        </aside>
+
+        <section class="study-panel">
+          <section class="quick-start">
+            <div class="quick-copy">
+              <p class="eyebrow">Học Nhanh</p>
+              <h2>Chọn cách học phù hợp lúc này</h2>
+              <p class="feedback">
+                Học thẻ để làm quen, trắc nghiệm để khóa nhớ, gõ từ để nhớ mặt chữ,
+                rồi luyện phát âm để dùng được trong bài nói.
+              </p>
+            </div>
+            <div class="quick-modes" id="quickModes">
+              <button type="button" class="mode-chip active" data-mode="flashcard">Học thẻ</button>
+              <button type="button" class="mode-chip" data-mode="quiz">Trắc nghiệm</button>
+              <button type="button" class="mode-chip" data-mode="typing">Gõ từ</button>
+              <button type="button" class="mode-chip" data-mode="speaking">Phát âm</button>
+            </div>
+          </section>
+
+          <main class="board">
+            <section class="panel active" id="flashcardPanel">
+              <div class="card-stage">
+                <div class="flashcard" id="flashcard">
+                  <div class="flashcard-face front">
+                    <span class="topic-badge" id="flashTopic"></span>
+                    <h2 id="flashWord"></h2>
+                    <p class="ipa" id="flashIpa"></p>
+                    <p class="hint">Bấm lật thẻ để xem nghĩa, ví dụ và mẹo phát âm.</p>
+                  </div>
+                  <div class="flashcard-face back">
+                    <span class="topic-badge" id="flashTopicBack"></span>
+                    <h2 id="flashMeaning"></h2>
+                    <p class="ipa" id="flashPronounce"></p>
+                    <p id="flashExample"></p>
+                    <p class="tip" id="flashTip"></p>
+                  </div>
+                </div>
+                <div class="actions actions-primary">
+                  <button id="flipBtn">Lật thẻ</button>
+                  <button id="speakFlashBtn">Nghe phát âm</button>
+                  <button id="knownBtn" class="accent">Đã nhớ</button>
+                  <button id="nextFlashBtn" class="secondary">Từ tiếp theo</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel" id="quizPanel">
+              <div class="mode-card">
+                <span class="topic-badge" id="quizTopic"></span>
+                <p class="label">Chọn đáp án đúng</p>
+                <h2 id="quizPrompt"></h2>
+                <p class="ipa" id="quizMeta"></p>
+                <div class="choice-grid" id="quizChoices"></div>
+                <div class="actions actions-primary">
+                  <button id="speakQuizBtn">Nghe từ</button>
+                  <button id="nextQuizBtn" class="secondary">Câu khác</button>
+                </div>
+                <p id="quizFeedback" class="feedback"></p>
+              </div>
+            </section>
+
+            <section class="panel" id="typingPanel">
+              <div class="mode-card">
+                <span class="topic-badge" id="typingTopic"></span>
+                <p class="label">Gõ từ tiếng Anh theo nghĩa</p>
+                <h2 id="typingMeaning"></h2>
+                <p class="ipa" id="typingExample"></p>
+                <form id="typingForm" class="typing-form">
+                  <input
+                    id="typingInput"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Nhập từ tiếng Anh..."
+                  />
+                  <button type="submit">Kiểm tra</button>
+                </form>
+                <div class="actions actions-primary">
+                  <button id="showAnswerBtn" class="secondary">Xem đáp án</button>
+                  <button id="speakTypingBtn">Nghe phát âm</button>
+                  <button id="nextTypingBtn" class="secondary">Từ khác</button>
+                </div>
+                <p id="typingFeedback" class="feedback"></p>
+              </div>
+            </section>
+
+            <section class="panel" id="speakingPanel">
+              <div class="mode-card">
+                <span class="topic-badge" id="speakTopic"></span>
+                <p class="label">Luyện phát âm và nói</p>
+                <h2 id="speakWord"></h2>
+                <p class="ipa" id="speakIpa"></p>
+                <p id="speakMeaning"></p>
+                <p class="tip" id="speakGuide"></p>
+                <div class="actions actions-primary">
+                  <button id="playSpeakBtn">Nghe mẫu</button>
+                  <button id="recordBtn">Nói thử</button>
+                  <button id="nextSpeakBtn" class="secondary">Từ khác</button>
+                </div>
+                <p id="speechStatus" class="feedback">
+                  Trình duyệt sẽ dùng giọng máy để đọc. Nếu máy hỗ trợ nhận diện giọng
+                  nói, nút "Nói thử" sẽ kiểm tra xem bạn phát âm có gần đúng không.
+                </p>
+              </div>
+            </section>
+          </main>
+        </section>
+      </section>
+
+      <section class="toolbar compact-toolbar">
+        <label>
+          Nhóm lớn
+          <select id="groupFilter"></select>
+        </label>
+        <label>
+          Topic nhỏ
+          <select id="subtopicFilter"></select>
+        </label>
+        <label>
+          Chế độ
+          <select id="modeSelect">
+            <option value="flashcard">Flashcard</option>
+            <option value="quiz">Trắc nghiệm</option>
+            <option value="typing">Gõ từ</option>
+            <option value="speaking">Phát âm</option>
+          </select>
+        </label>
+        <label>
+          Giọng đọc
+          <select id="voiceSelect">
+            <option value="">Đang tải danh sách giọng...</option>
+          </select>
+        </label>
+        <label>
+          Tốc độ đọc
+          <select id="speechRateSelect">
+            <option value="0.75">Chậm rõ</option>
+            <option value="0.9" selected>Tự nhiên</option>
+            <option value="1">Nhanh hơn</option>
+          </select>
+        </label>
+        <button id="previewVoiceBtn">Nghe thử giọng</button>
+        <button id="shuffleBtn" class="secondary">Đổi bộ câu hỏi</button>
+        <button id="resetProgressBtn" class="secondary">Xóa tiến độ</button>
+      </section>
+
+      <section class="voice-panel">
+        <div class="voice-panel-text">
+          <p class="eyebrow">Text To Speech</p>
+          <h2>Chế độ phát âm hiện tại</h2>
+          <p id="voiceStatus" class="feedback">
+            Ứng dụng đang tự động tìm giọng tiếng Anh tốt nhất trên trình duyệt của bạn.
+          </p>
+        </div>
+        <div class="voice-panel-tags">
+          <span class="voice-chip" id="voiceEngineChip">Nguồn: Browser TTS</span>
+          <span class="voice-chip" id="voiceNameChip">Giọng: Chưa xác định</span>
+        </div>
+      </section>
+
+      <section class="guide-grid">
+        <article class="guide-card">
+          <h3>8 nhóm lớn</h3>
+          <p>
+            Personal Life, Education and Learning, Work and Career, Health and Lifestyle,
+            Technology and Media, Travel and Transport, Society and Community, Environment and Green Living.
+          </p>
+        </article>
+        <article class="guide-card">
+          <h3>Mẹo học nhanh</h3>
+          <p>
+            Học theo vòng: nhìn từ, nghe phát âm, đọc IPA, đặt câu ngắn, sau đó
+            làm quiz và nói lại thành tiếng.
+          </p>
+        </article>
+        <article class="guide-card">
+          <h3>IPA quan trọng</h3>
+          <p>
+            Âm dài như /i:/, /u:/ cần kéo hơi. Âm cuối như /t/, /d/, /k/, /s/
+            rất quan trọng khi nói trong bài thi.
+          </p>
+        </article>
+        <article class="guide-card">
+          <h3>Chiến lược VSTEP B1</h3>
+          <p>
+            Ưu tiên từ dễ dùng trong nói và viết: nêu ý kiến, mô tả thói quen,
+            kể trải nghiệm, nói về học tập, công việc và xã hội.
+          </p>
+        </article>
+      </section>
+
+      <section class="phonics-card">
+        <h2>Bảng nhớ nhanh phiên âm và phát âm</h2>
+        <div class="phonics-grid">
+          <div>
+            <h3>Nguyên âm dễ gặp</h3>
+            <ul>
+              <li><strong>/i:/</strong> như trong <em>teach</em>: kéo dài miệng cười</li>
+              <li><strong>/ɪ/</strong> như trong <em>live</em>: ngắn và nhanh</li>
+              <li><strong>/æ/</strong> như trong <em>family</em>: mở miệng rộng</li>
+              <li><strong>/ʌ/</strong> như trong <em>study</em>: âm giữa, ngắn</li>
+              <li><strong>/ɜː/</strong> như trong <em>work</em>: cong môi nhẹ</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Phụ âm cần chú ý</h3>
+            <ul>
+              <li><strong>/θ/</strong> trong <em>think</em>: đầu lưỡi chạm răng</li>
+              <li><strong>/dʒ/</strong> trong <em>job</em>: giống "gi" nhưng bật rõ</li>
+              <li><strong>/ʃ/</strong> trong <em>share</em>: gió mạnh qua môi</li>
+              <li><strong>/v/</strong> trong <em>travel</em>: răng chạm môi dưới</li>
+              <li><strong>Âm cuối</strong>: đọc nhẹ nhưng không bỏ âm</li>
+            </ul>
+          </div>
+        </div>
+        <p class="feedback">
+          Nếu bạn cần giọng đọc tự nhiên như người bản xứ hơn nữa, bước tiếp theo
+          sẽ là dùng cloud TTS. Bản local hiện tại đã được nâng cấp để ưu tiên
+          voice tiếng Anh chất lượng cao có sẵn trên máy.
+        </p>
+      </section>
+    </div>
+
+    <script src="words.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
